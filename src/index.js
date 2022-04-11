@@ -138,10 +138,10 @@ scene.add(camera);
 /**
  * Renderer
  */
-const renderer = new THREE.WebGLRenderer({ canvas });
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
 renderer.setSize(sizes.width, sizes.height);
-renderer.shadowMap.enabled = true;
-renderer.setClearColor(0xffffff);
+// renderer.shadowMap.enabled = true;
+// renderer.setClearColor("0xffffff");
 
 /**
  * Animate
