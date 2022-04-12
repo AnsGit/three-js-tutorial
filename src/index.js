@@ -32,35 +32,31 @@ await loadResources();
 
 const cube = resources[0].scene;
 
-// cube.position.copy(new THREE.Vector3(4, 0, 0));
-cube.position.set(0, 0, 0);
-cube.scale.set(3, 3, 3);
+// cube.scale.set(3, 3, 3);
+const bbox = new THREE.Box3().setFromObject(cube);
+console.log(bbox);
+const size = bbox.getSize(new THREE.Vector3());
+console.log(size);
+
+cube.position.set(
+  -bbox.min.x - size.x / 2,
+  -bbox.min.y - size.y / 2,
+  -bbox.min.z - size.z / 2
+);
+// cube.rotation.set(0.5, Math.PI / 4, 0);
 cube.receiveShadow = false;
 cube.castShadow = false;
-// console.log(cube.position)
-
 console.log(cube);
-scene.add(cube);
 
-/**
- * Base + Box
- */
-// const cube = new THREE.BoxGeometry(1, 1, 1);
-// const cubeMat = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-// cubeMat.roughness = 0.4;
-// const cubeMesh = new THREE.Mesh(cube, cubeMat);
-// cubeMesh.castShadow = true;
-// scene.add(cubeMesh);
+// scene.add(cube);
 
-// const base = new THREE.PlaneGeometry(5, 5);
-// const baseMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
-// baseMat.roughness = 0.4;
-// const baseMesh = new THREE.Mesh(base, baseMat);
-// baseMesh.receiveShadow = true;
-// baseMesh.translateY(-1.0);
-// baseMesh.rotateX(-Math.PI / 2);
+const pivotPoint = new THREE.Object3D();
 
-// scene.add(baseMesh);
+pivotPoint.position.set(1, 1, 0);
+pivotPoint.rotation.set(0.5, Math.PI / 4, 0);
+pivotPoint.add(cube);
+
+scene.add(pivotPoint);
 
 /**
  * Sizes
@@ -75,30 +71,6 @@ const sizes = {
  */
 
 const lights = [];
-
-// lights[0] = new THREE.PointLight({ color: 0xffffff }, 5);
-// lights[0].position.set(-2, 1, 4);
-// // lights[0].castShadow = true;
-// // lights[0].shadow.mapSize.width = 1024;
-// // lights[0].shadow.mapSize.height = 510;
-// // lights[0].shadow.radius = 5;
-// scene.add(lights[0]);
-//
-// lights[1] = new THREE.PointLight({ color: 0xffffff }, 3);
-// lights[1].position.set(3, -1, 3);
-// // lights[1].castShadow = true;
-// // lights[1].shadow.mapSize.width = 1024;
-// // lights[1].shadow.mapSize.height = 510;
-// // lights[1].shadow.radius = 5;
-// scene.add(lights[1]);
-//
-// lights[2] = new THREE.PointLight({ color: 0xffffff }, 3);
-// lights[2].position.set(3, 1, 3);
-// // lights[2].castShadow = true;
-// // lights[2].shadow.mapSize.width = 1024;
-// // lights[2].shadow.mapSize.height = 510;
-// // lights[2].shadow.radius = 5;
-// scene.add(lights[2]);
 
 // left
 lights[0] = new THREE.PointLight({ color: 0xffffff }, 3);
@@ -133,6 +105,7 @@ const camera = new THREE.OrthographicCamera(
 );
 camera.position.x = 0;
 camera.position.z = 5;
+// camera.lookAt(new THREE.Vector3(-2, -2, -2));
 scene.add(camera);
 
 /**
@@ -140,8 +113,8 @@ scene.add(camera);
  */
 const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
 renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(window.devicePixelRatio);
 // renderer.shadowMap.enabled = true;
-// renderer.setClearColor("0xffffff");
 
 /**
  * Animate
@@ -150,8 +123,13 @@ renderer.setSize(sizes.width, sizes.height);
 // renderer.render(scene, camera);
 
 const tick = () => {
-  cube.rotateX(0.01);
-  cube.rotateY(0.01);
+  // cube.rotateX(0.01);
+  // cube.rotateY(0.01);
+  // cube.rotateZ(0.01);
+
+  // pivotPoint.rotateX(0.01);
+  pivotPoint.rotateY(0.01);
+  // pivotPoint.rotateZ(0.01);
 
   // Render
   renderer.render(scene, camera);
@@ -159,5 +137,4 @@ const tick = () => {
   // Call tick again on the next frame
   window.requestAnimationFrame(tick);
 };
-
 tick();
