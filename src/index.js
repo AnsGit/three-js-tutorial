@@ -45,8 +45,8 @@ cube.position.set(
   -bbox.min.z - size.z / 2
 );
 // cube.rotation.set(0.5, Math.PI / 4, 0);
-cube.receiveShadow = false;
-cube.castShadow = false;
+// cube.receiveShadow = false;
+// cube.castShadow = false;
 console.log(cube);
 
 // scene.add(cube);
