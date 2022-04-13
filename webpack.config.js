@@ -18,7 +18,7 @@ module.exports = {
     },
   },
   output: {
-    path: path.join(__dirname, "/dist"),
+    path: path.join(__dirname, "/build"),
     filename: "index.js",
   },
   module: {
@@ -27,6 +27,10 @@ module.exports = {
         test: /\.(js)x?$/,
         loader: "babel-loader",
         exclude: /node_modules/,
+      },
+      {
+        test: /\.s[ac]ss$/i,
+        use: ["style-loader", "css-loader", "sass-loader"],
       },
     ],
   },
