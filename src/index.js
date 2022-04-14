@@ -1,6 +1,7 @@
 import "./styles.scss";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import * as TWEEN from "tween";
 
 /**
  * Base
@@ -69,6 +70,20 @@ pivotPointsGroup.add(pivotPoint);
 pivotPointsGroup.add(pivotPoint1);
 scene.add(pivotPointsGroup);
 
+// Set transparent
+pivotPointsGroup.traverse((node) => {
+  if (node.isMesh) {
+    // node.material.opacity = 0.5;
+    node.material.transparent = true;
+
+    const color = node.material.color.getHex();
+    // console.log(node.material.color);
+
+    node.material.color.lerp(new THREE.Color(0xff0505), 0.4);
+    node.material.color.lerp(new THREE.Color(color), 1);
+  }
+});
+
 /**
  * Sizes
  */
@@ -82,32 +97,6 @@ const sizes = {
  */
 
 const lights = [];
-
-// // left
-// lights[0] = new THREE.PointLight({ color: 0xffffff }, 3);
-// lights[0].position.set(-4, 0, 3);
-// scene.add(lights[0]);
-//
-// // right
-// lights[1] = new THREE.PointLight({ color: 0xffffff }, 2);
-// lights[1].position.set(4, 0, 3);
-// scene.add(lights[1]);
-//
-// // Top
-// lights[2] = new THREE.PointLight({ color: 0xffffff }, 2);
-// lights[2].position.set(0, 4, 3);
-// scene.add(lights[2]);
-//
-// // Bottom
-// lights[3] = new THREE.PointLight({ color: 0xffffff }, 2);
-// lights[3].position.set(0, -4, 3);
-// scene.add(lights[3]);
-
-// var light = new THREE.HemisphereLight("#ffffff", "#ffffff");
-// scene.add(light);
-
-// var light = new THREE.AmbientLight(0xffffff);
-// scene.add(light);
 
 lights[0] = new THREE.DirectionalLight(0xffffff, 3);
 lights[0].position.set(0, 0, 10);
@@ -156,13 +145,11 @@ renderer.setPixelRatio(window.devicePixelRatio);
  * Animate
  */
 
-// renderer.render(scene, camera);
+renderer.render(scene, camera);
+
+let requestID;
 
 const tick = () => {
-  // cube.rotateX(0.01);
-  // cube.rotateY(0.01);
-  // cube.rotateZ(0.01);
-
   // pivotPoint.rotateX(0.01);
   // pivotPoint.rotateY(0.01);
   // pivotPoint.rotateZ(0.01);
@@ -177,8 +164,34 @@ const tick = () => {
 
   // Render
   renderer.render(scene, camera);
+  TWEEN.update();
 
   // Call tick again on the next frame
-  window.requestAnimationFrame(tick);
+  requestID = window.requestAnimationFrame(tick);
 };
 tick();
+
+// setTimeout(() => {
+//   window.cancelAnimationFrame(requestID);
+// }, 2000);
+
+console.log("BEFORE ANIMATION");
+
+await new Promise((resolve) => {
+  new TWEEN.Tween()
+    .to({}, 1000)
+    .delay(1000)
+    .easing(TWEEN.Easing.Linear.None)
+    .onUpdate((now) => {
+      pivotPointsGroup.traverse((node) => {
+        if (node.isMesh) {
+          node.material.opacity = 1.5 - now;
+          // node.material.transparent = true;
+        }
+      });
+    })
+    .onComplete(resolve)
+    .start();
+});
+
+console.log("AFTER ANIMATION");
