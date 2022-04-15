@@ -1,4 +1,8 @@
-#canvas {
-  border: 1px purple solid;
-  box-sizing: border-box;
+#root {
+  #canvas {
+    display: block;
+    margin: 0 auto;
+    border: 1px purple solid;
+    box-sizing: border-box;
+  }
 }
